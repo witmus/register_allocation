@@ -1,0 +1,14 @@
+val1 = 123
+val2 = 321
+
+val3 = val1 + val2
+
+val4 = val3 / val1
+
+val5 = val4 * val3 * val2 * val1
+
+val1 = val2 - val5
+
+val6 = 900
+
+val7 = val6 + val5 * val2 - val4
