@@ -3,6 +3,7 @@ from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
 from tkinter.simpledialog import askinteger
 from tkinter.ttk import Combobox, Progressbar
+from simplify_spill import simplify_and_spill
 from greedy import greedy
 
 from matplotlib import pyplot as plt
@@ -43,6 +44,10 @@ class MainWindow(Tk):
         #print(symbols)
         
         graph = generate_graph(symbols)
+        if algo == 0:
+            coloring = simplify_and_spill(g=graph, r=int(regs))
+            color_map = [coloring[node] for node in graph.nodes()]
+            nx.draw(graph, with_labels=True, font_weight='bold', node_color=color_map, cmap=plt.cm.rainbow)
         if algo == 1:
             coloring = greedy(g=graph, r=int(regs))
             color_map = [coloring[node] for node in graph.nodes()]
@@ -67,7 +72,7 @@ class MainWindow(Tk):
         registerLabel = Entry(self, textvariable=self.registers, state=DISABLED)
         registerLabel.grid(row=1,column=1,pady=10)
 
-        self.algos = ['Brute Force', 'Greedy', 'Heuristic']
+        self.algos = ['Greedy', 'SimplifyAndSpill']
         
         self.algoList = Combobox(self, values=self.algos)
         self.algoList.set("Choose an algorithm")
