@@ -3,6 +3,7 @@ from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
 from tkinter.simpledialog import askinteger
 from tkinter.ttk import Combobox, Progressbar
+from simplify_spill import simplify_and_spill
 
 from matplotlib import pyplot as plt
 import networkx as nx
@@ -42,7 +43,11 @@ class MainWindow(Tk):
         print(symbols)
         
         graph = generate_graph(symbols)
-        nx.draw(graph, with_labels=True, font_weight='bold')
+        if algo == 1:
+            coloring = simplify_and_spill(g=graph, r=int(regs))
+            color_map = [coloring[node] for node in graph.nodes()]
+            nx.draw(graph, with_labels=True, font_weight='bold', node_color=color_map, cmap=plt.cm.rainbow)
+
         plt.show()
 
     def __init__(self):
