@@ -4,7 +4,6 @@ from typing import List
 from matplotlib import pyplot as plt
 import networkx as nx
 
-
 def generate_graph(symbols: List[List[str]]) -> nx.Graph :
     G = nx.Graph()
     for s in symbols:
