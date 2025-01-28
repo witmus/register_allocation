@@ -1,34 +1,21 @@
-from itertools import combinations
-from typing import List
+from random import shuffle
 
-from matplotlib import pyplot as plt
-import networkx as nx
-
-
-
-
-def greedy(g, r):
-
-    nodes = sorted(g.nodes(), key=lambda x: g.degree(x), reverse=True)
+def greedy(g, r, is_welsh_powell=True):
+    nodes = list(g.nodes())
+    if is_welsh_powell:
+        nodes = sorted(nodes, key=lambda x: g.degree(x), reverse=True)
+    else:
+        shuffle(nodes)
+    
     colors = {}
     neighbor_colors = set()
 
-
     for node in nodes:
-        #print("\nnode: ")
-        #print(node)
-
         neighbor_colors = set()
-        #print("\nneighbor_colors: ")
-        #print(neighbor_colors)
 
         for neighbor in g.neighbors(node):
-            #print("\nneighbor: ")
-            #print(neighbor)
             if neighbor in colors:
                 neighbor_colors.add(colors[neighbor])
-                #print("\nneighbor colors: ")
-                #print(neighbor_colors)
 
         color = 0
 
@@ -36,21 +23,10 @@ def greedy(g, r):
             color += 1
             if color > r-1:
                 print("error: za malo dostepnych rejestrów")
-            #print('\ncolor: ')
-            #print(color)
         
         colors[node] = color
-        #print('\ncolors: ')
-        #print(colors)
-    
-    #print("Kolory: ")
-    #print(colors)
     
     return colors
-
-
-
-
 
 """
 def generate_graph(symbols: List[List[str]]) -> nx.Graph :
@@ -87,4 +63,3 @@ print("Kolory wierzchołków:", coloring)
     print(sorted(g.nodes(), key=lambda x: g.degree(x), reverse=True))
 
 """
-

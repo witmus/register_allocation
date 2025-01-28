@@ -29,27 +29,29 @@ class MainWindow(Tk):
         algo = self.algoList.current()
 
         if fp == '':
-            missing_data.append('file path')
+            # missing_data.append('file path')
+            fp = 'input.txt'
         if regs == '':
-            missing_data.append('number of registers')
+            # missing_data.append('number of registers')
+            regs = '3'
         if algo == -1:
             missing_data.append('algorithm')
         if len(missing_data) > 0:
             messagebox.showinfo("Missing data", "Following data missing:\n -" + '\n- '.join(missing_data))
             return
 
+        algo = self.algoList.current()
         code = get_input(fp)
-        #display_tree(code)
         symbols = get_symbols(code)
-        #print(symbols)
         
         graph = generate_graph(symbols)
         if algo == 0:
-            coloring = simplify_and_spill(g=graph, r=int(regs))
+            coloring = greedy(g=graph, r=int(regs))
+            print(coloring)
             color_map = [coloring[node] for node in graph.nodes()]
             nx.draw(graph, with_labels=True, font_weight='bold', node_color=color_map, cmap=plt.cm.rainbow)
-        if algo == 1:
-            coloring = greedy(g=graph, r=int(regs))
+        elif algo == 1:
+            coloring = simplify_and_spill(graph, int(regs))
             color_map = [coloring[node] for node in graph.nodes()]
             nx.draw(graph, with_labels=True, font_weight='bold', node_color=color_map, cmap=plt.cm.rainbow)
 
