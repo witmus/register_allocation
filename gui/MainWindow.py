@@ -3,13 +3,16 @@ from tkinter import messagebox
 from tkinter.filedialog import askopenfilename
 from tkinter.simpledialog import askinteger
 from tkinter.ttk import Combobox, Progressbar
+
+from backtracking import backtracking
 from simplify_spill import simplify_and_spill
 from greedy import greedy
+from dsatur import dsatur
+from tabu_search import tabu_search
 
 from matplotlib import pyplot as plt
 import networkx as nx
 
-from graphgen.display_tree import display_tree
 from graphgen.generate_graph import generate_graph
 from graphgen.get_input import get_input
 from graphgen.get_symbols import get_symbols
@@ -41,20 +44,28 @@ class MainWindow(Tk):
             return
 
         algo = self.algoList.current()
+        registers = int(regs)
         code = get_input(fp)
         symbols = get_symbols(code)
         
         graph = generate_graph(symbols)
-        if algo == 0:
-            coloring = greedy(g=graph, r=int(regs))
-            print(coloring)
-            color_map = [coloring[node] for node in graph.nodes()]
-            nx.draw(graph, with_labels=True, font_weight='bold', node_color=color_map, cmap=plt.cm.rainbow)
-        elif algo == 1:
-            coloring = simplify_and_spill(graph, int(regs))
-            color_map = [coloring[node] for node in graph.nodes()]
-            nx.draw(graph, with_labels=True, font_weight='bold', node_color=color_map, cmap=plt.cm.rainbow)
-
+        match algo:
+            case 0:
+                coloring = greedy(graph, is_welsh_powell=False)
+            case 1:
+                coloring = greedy(graph, is_welsh_powell=True)
+            case 2:
+                coloring = backtracking(graph, registers)
+            case 3:
+                coloring = dsatur(graph)
+            case 4:
+                coloring = simplify_and_spill(graph, registers)
+            case 5:
+                coloring = tabu_search(graph, registers)
+            
+        print(coloring)
+        color_map = [coloring[node] for node in graph.nodes()]
+        nx.draw(graph, with_labels=True, font_weight='bold', node_color=color_map, cmap=plt.cm.rainbow)
         plt.show()
 
     def __init__(self):
@@ -74,7 +85,14 @@ class MainWindow(Tk):
         registerLabel = Entry(self, textvariable=self.registers, state=DISABLED)
         registerLabel.grid(row=1,column=1,pady=10)
 
-        self.algos = ['Greedy', 'SimplifyAndSpill']
+        self.algos = [
+            'greedy',
+            'welsh_powell',
+            'backtracking',
+            'dsatur',
+            'simplify_spill',
+            'tabu_search'
+        ]
         
         self.algoList = Combobox(self, values=self.algos)
         self.algoList.set("Choose an algorithm")

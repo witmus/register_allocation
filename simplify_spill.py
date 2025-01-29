@@ -20,9 +20,11 @@ def simplify_and_spill(g, num_registers):
 
         if low_degree_node is not None:
             stack.append(low_degree_node)
+            temp = dict(temp_graph)
             for neighbor in temp_graph[low_degree_node]:
-                temp_graph[neighbor].remove(low_degree_node)
-            del temp_graph[low_degree_node]
+                temp[neighbor].remove(low_degree_node)
+            del temp[low_degree_node]
+            temp_graph = dict(temp)
         else:
             spill_node = next(iter(temp_graph))
             spilled.add(spill_node)

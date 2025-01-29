@@ -1,7 +1,9 @@
+import networkx as nx
 from collections import deque
 from random import randint
 
-def tabu_search(graph, registers, tabu_size=10, repeats=100, max_iterations=1000):
+def tabu_search(g, registers, tabu_size=10, repeats=100, max_iterations=1000):
+    graph = nx.to_numpy_array(g)
     colors = list(range(registers))
     result = dict()
     
@@ -67,4 +69,5 @@ def tabu_search(graph, registers, tabu_size=10, repeats=100, max_iterations=1000
         return None
     else:
         print("Found coloring:\n", result)
-        return result
+        nodes = list(g.nodes())
+        return {nodes[i]: result[i] for i in range(len(nodes))}

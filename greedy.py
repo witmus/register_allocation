@@ -1,6 +1,6 @@
 from random import shuffle
 
-def greedy(g, r, is_welsh_powell=True):
+def greedy(g, is_welsh_powell=True):
     nodes = list(g.nodes())
     if is_welsh_powell:
         nodes = sorted(nodes, key=lambda x: g.degree(x), reverse=True)
@@ -21,8 +21,6 @@ def greedy(g, r, is_welsh_powell=True):
 
         while color in neighbor_colors:
             color += 1
-            if color > r-1:
-                print("error: za malo dostepnych rejestrów")
         
         colors[node] = color
     
