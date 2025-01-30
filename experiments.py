@@ -1,7 +1,9 @@
 from math import sqrt
 from time import perf_counter
 import numpy as np
+import networkx as nx
 
+from graph_io import read_graph
 from graphgen.get_graph import get_graph
 
 from backtracking import backtracking
@@ -27,7 +29,7 @@ def experiment_greedy():
     try:
         for s,size in enumerate(GRAPH_SIZES):
             for d,density in enumerate(DENSITIES):
-                graph = get_graph(f'inputs/input_{size}_{density}.txt')
+                graph = read_graph(f'graphs/g_{size}_{density}')
                 print(f'greedy {size}-{density} start')
                 for i in range(NUM_CALLS):
                     start = perf_counter()
@@ -36,8 +38,7 @@ def experiment_greedy():
                     scores[s,d,i,0] = stop - start
                     scores[s,d,i,1] = max(result.values()) + 1
                 print(f'greedy {size}-{density} finish')
-        np.save(f'scores/greedy', scores)
-    except:
+    finally:
         np.save(f'scores/greedy', scores)
 
 def experiment_welsh_powell():
@@ -45,7 +46,7 @@ def experiment_welsh_powell():
     try:
         for s,size in enumerate(GRAPH_SIZES):
             for d,density in enumerate(DENSITIES):
-                graph = get_graph(f'inputs/input_{size}_{density}.txt')
+                graph = read_graph(f'graphs/g_{size}_{density}')
                 print(f'welshpowell {size}-{density} start')
                 for i in range(NUM_CALLS):
                     start = perf_counter()
@@ -54,9 +55,7 @@ def experiment_welsh_powell():
                     scores[s,d,i,0] = stop - start
                     scores[s,d,i,1] = max(result.values()) + 1
                 print(f'welsh-powell {size}-{density} finish')
-                np.save('wp_checkpoint', scores)
-        np.save(f'scores/welshpowell', scores)
-    except:
+    finally:
         np.save(f'scores/welshpowell', scores)
 
 def experiment_backtracking():
@@ -64,24 +63,18 @@ def experiment_backtracking():
     try:
         for s,size in enumerate(GRAPH_SIZES):
             for d,density in enumerate(DENSITIES):
-                graph = get_graph(f'inputs/input_{size}_{density}.txt')
+                graph = read_graph(f'graphs/g_{size}_{density}')
                 print(f'backtracking {size}-{density} start')
                 for i in range(NUM_CALLS):
-                    colors = int(sqrt(size))
-                    while True:
-                        start = perf_counter()
-                        result = backtracking(graph, colors)
-                        stop = perf_counter()
-                        if -1 in result.values():
-                            print('fail', colors)
-                            colors += 1
-                        else:
-                            scores[s,d,i,0] = stop - start
-                            scores[s,d,i,1] = colors
-                            break
+                    colors = max(nx.greedy_color(graph).values())
+                    start = perf_counter()
+                    result = backtracking(graph, colors)
+                    stop = perf_counter()
+                    scores[s,d,i,0] = stop - start
+                    scores[s,d,i,1] = max(result.values()) + 1
                 print(f'backtracking {size}-{density} finish')
-        np.save(f'scores/backtracking', scores)
-    except:
+        # np.save(f'scores/backtracking', scores)
+    finally:
         np.save(f'scores/backtracking', scores)
 
 def experiment_dsatur():
@@ -89,7 +82,7 @@ def experiment_dsatur():
     try:
         for s,size in enumerate(GRAPH_SIZES):
             for d,density in enumerate(DENSITIES):
-                graph = get_graph(f'inputs/input_{size}_{density}.txt')
+                graph = read_graph(f'graphs/g_{size}_{density}')
                 print(f'dsatur {size}-{density} start')
                 for i in range(NUM_CALLS):
                     start = perf_counter()
@@ -99,43 +92,50 @@ def experiment_dsatur():
                     scores[s,d,i,1] = max(result.values()) + 1
                 print(f'dsatur {size}-{density} finish')
                 np.save('dsatur_checkpoint', scores)
-        np.save(f'scores/dsatur', scores)
-    except:
+    finally:
         np.save(f'scores/dsatur', scores)
 
 def experiment_simpspill():
-    scores = np.zeros(shape=(len(GRAPH_SIZES), len(DENSITIES), NUM_CALLS, 2))
+    scores = np.zeros(shape=(len(GRAPH_SIZES), len(DENSITIES), NUM_CALLS, 3))
     try:
         for s,size in enumerate(GRAPH_SIZES):
             for d,density in enumerate(DENSITIES):
-                graph = get_graph(f'inputs/input_{size}_{density}.txt')
+                graph = read_graph(f'graphs/g_{size}_{density}')
+                colors = max(nx.greedy_color(graph).values())
+                if size <= 10000:
+                    colors += 1
+                else:
+                    colors += 2
                 print(f'simpspill {size}-{density} start')
                 for i in range(NUM_CALLS):
                     start = perf_counter()
-                    result = simplify_and_spill(graph)
+                    result = simplify_and_spill(graph, colors)
+                    rvals = result.values()
                     stop = perf_counter()
                     scores[s,d,i,0] = stop - start
-                    scores[s,d,i,1] = max(result.values()) + 1
+                    scores[s,d,i,1] = max(rvals) + 1
+                    scores[s,d,i,2] = len([x for x in rvals if x == -1]) / size
                 print(f'simpspill {size}-{density} finish')
-        np.save(f'scores/simpspill', scores)
-    except:
+        # np.save(f'scores/simpspill', scores)
+    finally:
+        print('saving simpsill')
         np.save(f'scores/simpspill', scores)
 
-def experiment_tabu(n):
+def experiment_tabu():
     scores = np.zeros(shape=(len(GRAPH_SIZES), len(DENSITIES), NUM_CALLS, 2))
     try:
         for s,size in enumerate(GRAPH_SIZES):
             for d,density in enumerate(DENSITIES):
-                graph = get_graph(f'inputs/input_{size}_{density}.txt')
+                graph = read_graph(f'graphs/g_{size}_{density}')
+                colors = max(nx.greedy_color(graph).values()) + 1
                 print(f'tabu {size}-{density} start')
                 for i in range(NUM_CALLS):
                     start = perf_counter()
-                    result = tabu_search(graph, n, int(n/2), n * 2, n * 4)
+                    result = tabu_search(graph, colors, size, int(size / 2), size * 10)
                     stop = perf_counter()
                     scores[s,d,i,0] = stop - start
                     if result != None:
                         scores[s,d,i,1] = max(result.values()) + 1
                 print(f'tabu {size}-{density} finish')
-        np.save(f'scores/tabu', scores)
-    except:
+    finally:
         np.save(f'scores/tabu', scores)

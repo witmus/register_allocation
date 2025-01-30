@@ -8,7 +8,7 @@ ALGOS = [
     'welshpowell',
     # 'backtracking',
     # 'dsatur',
-    # 'simplify_spill',
+    # 'simpspill',
     # 'greedy',
     # 'tabusearch'
 ]
@@ -21,6 +21,8 @@ def plot_scores(algo: str):
             print(np.mean(scores[s,d,:,0]) * 1000)
             print(np.std(scores[s,d,:,0]) * 1000)
             print(np.mean(scores[s,d,:,1]))
+            if algo == 'simpspill':
+                print(np.mean(scores[s,d,:,2]))
 
 if __name__ == '__main__':
     try:

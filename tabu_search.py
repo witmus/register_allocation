@@ -3,9 +3,12 @@ from collections import deque
 from random import randint
 
 def tabu_search(g, registers, tabu_size=10, repeats=100, max_iterations=1000):
-    graph = nx.to_numpy_array(g)
+    graph = nx.to_numpy_array(g, dtype='b')
     colors = list(range(registers))
     result = dict()
+    
+    print('tabusearch call: ', registers, tabu_size, repeats, max_iterations)
+    print('graph size: ', len(graph))
     
     for i in range(len(graph)):
         result[i] = colors[randint(0, registers - 1)]
