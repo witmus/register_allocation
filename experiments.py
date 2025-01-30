@@ -54,6 +54,7 @@ def experiment_welsh_powell():
                     scores[s,d,i,0] = stop - start
                     scores[s,d,i,1] = max(result.values()) + 1
                 print(f'welsh-powell {size}-{density} finish')
+                np.save('wp_checkpoint', scores)
         np.save(f'scores/welshpowell', scores)
     except:
         np.save(f'scores/welshpowell', scores)
@@ -97,6 +98,7 @@ def experiment_dsatur():
                     scores[s,d,i,0] = stop - start
                     scores[s,d,i,1] = max(result.values()) + 1
                 print(f'dsatur {size}-{density} finish')
+                np.save('dsatur_checkpoint', scores)
         np.save(f'scores/dsatur', scores)
     except:
         np.save(f'scores/dsatur', scores)
@@ -119,7 +121,7 @@ def experiment_simpspill():
     except:
         np.save(f'scores/simpspill', scores)
 
-def experiment_tabu():
+def experiment_tabu(n):
     scores = np.zeros(shape=(len(GRAPH_SIZES), len(DENSITIES), NUM_CALLS, 2))
     try:
         for s,size in enumerate(GRAPH_SIZES):

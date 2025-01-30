@@ -1,0 +1,14 @@
+#generator_main.py
+# GMT Thu Jan 30 10:32:39 2025
+# 
+x1 x4 x2 x6 x9 x0 x10
+x4 x2 x6 x11 x0 x10 x5 x9
+x2 x6 x9 x5 x11 x10
+x6 x9 x11 x0 x3 x5
+x9 x11 x0 x5 x7 x3 x10
+x11 x0 x5 x10 x3
+x0 x3 x7 x10 x5
+x5 x7 x3 x10
+x7 x3
+x3 x10
+x10
