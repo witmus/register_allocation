@@ -9,8 +9,8 @@ ALGOS = [
     'welshpowell',
     'dsatur',
     'simpspill',
-    'backtracking',
-    'tabu'
+    # 'backtracking',
+    # 'tabu'
 ]
 
 def plot_time_on_nodes(points: int = 22):
@@ -19,6 +19,7 @@ def plot_time_on_nodes(points: int = 22):
     plt.xlabel('Liczba zmiennych')
     plt.ylabel('Czas [ms]')
     plt.yscale('log')
+    plt.xscale('log')
     for a, alg in enumerate(ALGOS):
         scores = np.load(f'scores/{alg}.npy')
         plt.plot(GRAPH_SIZES[:points], np.array([np.mean(x) for x in scores[:,:,:,0]])[:points], 'o-', label=alg)
@@ -47,9 +48,9 @@ if __name__ == '__main__':
     # plot_time_on_nodes()
     # plot_time_on_nodes(5)
     # plot_time_on_nodes(8)
-    # plot_time_on_nodes(17)
+    plot_time_on_nodes(17)
 
     # plot_colors_on_nodes()
-    plot_colors_on_nodes(5)
+    # plot_colors_on_nodes(5)
     # plot_colors_on_nodes(8)
     # plot_colors_on_nodes(17)
