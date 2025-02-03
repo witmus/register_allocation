@@ -22,8 +22,10 @@ def color_graph(am, r, result, vertex):
 
 
 def backtracking(graph, registers):
-    result = [-1] * len(graph)
+    result = [-1] * len(graph.nodes())
+    print(len(result))
     adjacency_matrix = nx.to_numpy_array(graph)
+    print(len(adjacency_matrix))
 
     color_graph(adjacency_matrix, registers, result, 0)
     

@@ -7,8 +7,8 @@ def tabu_search(g, registers, tabu_size=10, repeats=100, max_iterations=1000):
     colors = list(range(registers))
     result = dict()
     
-    print('tabusearch call: ', registers, tabu_size, repeats, max_iterations)
-    print('graph size: ', len(graph))
+    # print('tabusearch call: ', registers, tabu_size, repeats, max_iterations)
+    # print('graph size: ', len(graph))
     
     for i in range(len(graph)):
         result[i] = colors[randint(0, registers - 1)]
@@ -68,9 +68,9 @@ def tabu_search(g, registers, tabu_size=10, repeats=100, max_iterations=1000):
         counter += 1
 
     if conflicts != 0:
-        print("No coloring found with {} colors.".format(registers))
+        # print("No coloring found with {} colors.".format(registers))
         return None
     else:
-        print("Found coloring:\n", result)
+        # print("Found coloring:\n", result)
         nodes = list(g.nodes())
         return {nodes[i]: result[i] for i in range(len(nodes))}

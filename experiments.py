@@ -66,14 +66,15 @@ def experiment_backtracking():
                 graph = read_graph(f'graphs/g_{size}_{density}')
                 print(f'backtracking {size}-{density} start')
                 for i in range(NUM_CALLS):
-                    colors = max(nx.greedy_color(graph).values())
+                    colors = max(nx.greedy_color(graph).values()) + 1
                     start = perf_counter()
                     result = backtracking(graph, colors)
                     stop = perf_counter()
                     scores[s,d,i,0] = stop - start
                     scores[s,d,i,1] = max(result.values()) + 1
                 print(f'backtracking {size}-{density} finish')
-        # np.save(f'scores/backtracking', scores)
+                np.save(f'scores/backtracking_checkpoint', scores)
+        np.save(f'scores/backtracking', scores)
     finally:
         np.save(f'scores/backtracking', scores)
 
@@ -116,7 +117,8 @@ def experiment_simpspill():
                     scores[s,d,i,1] = max(rvals) + 1
                     scores[s,d,i,2] = len([x for x in rvals if x == -1]) / size
                 print(f'simpspill {size}-{density} finish')
-        # np.save(f'scores/simpspill', scores)
+                np.save('scores/simpspill_checkpoint', scores)
+        np.save(f'scores/simpspill', scores)
     finally:
         print('saving simpsill')
         np.save(f'scores/simpspill', scores)
@@ -131,11 +133,12 @@ def experiment_tabu():
                 print(f'tabu {size}-{density} start')
                 for i in range(NUM_CALLS):
                     start = perf_counter()
-                    result = tabu_search(graph, colors, size, int(size / 2), size * 10)
+                    result = tabu_search(graph, colors, density * 5, density * 50, density * 200)
                     stop = perf_counter()
                     scores[s,d,i,0] = stop - start
                     if result != None:
                         scores[s,d,i,1] = max(result.values()) + 1
-                print(f'tabu {size}-{density} finish')
+                print(f'tabu {size}-{density} finish {np.mean(scores[s,d,:,1])}')
+                np.save(f'scores/tabu_checkpoint', scores)
     finally:
         np.save(f'scores/tabu', scores)
